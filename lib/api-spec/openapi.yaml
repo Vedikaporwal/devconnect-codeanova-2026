@@ -11,6 +11,19 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /health:
+    get:
+      operationId: health
+      tags: [health]
+      summary: Health check
+      description: Returns the status of the DevConnect API
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiHealthResponse"
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +39,19 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    ApiHealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/HealthStatus"
+        message:
+          type: string
+      required:
+        - success
+        - data
+        - message
     HealthStatus:
       type: object
       properties:

@@ -1,0 +1,10 @@
+// DevConnect Day 1 foundation.
+// Domain models will be introduced in a later build day.
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}

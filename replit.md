@@ -1,44 +1,53 @@
-# [Project name]
+# DevConnect
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+DevConnect is a developer networking and portfolio platform that makes technical work and context easier to discover.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/devconnect run dev` — run the public landing page
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm prisma:generate` — generate the Prisma client from the foundation schema
+- Required env: `DATABASE_URL` for Prisma; `CLIENT_URL` for API CORS
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- React 19 + Vite + Tailwind CSS
 - API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
+- DB: PostgreSQL + Prisma
+- Validation: Zod
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+ - `artifacts/devconnect` — public React/Vite landing page and visual theme
+ - `artifacts/api-server` — Express API, health route, controllers, services, and middleware
+ - `lib/shared` — shared `ApiResponse<T>` contract
+ - `lib/api-spec/openapi.yaml` — source of truth for the API contract
+ - `prisma/schema.prisma` — PostgreSQL Prisma foundation; domain models are intentionally deferred
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Day 1 uses the existing pnpm workspace's `artifacts/` and `lib/` conventions rather than adding parallel top-level client/server packages.
+- The public experience is intentionally preview-only; product capabilities are not implemented until later days.
+- `/api/health` returns the shared `ApiResponse<T>` envelope and `/api/healthz` remains as a compatibility alias for the scaffold.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+The current product surface is a single public landing page introducing DevConnect, previewing developer profiles and team discovery, and guiding visitors toward future profile creation. Day 1 has no account or persistence flows.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+Day 1 scope is intentionally limited to the foundation and landing page; do not add authentication or later-day product features without a new request.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run API codegen after changing `lib/api-spec/openapi.yaml`.
+- Artifact workflows provide `PORT` and `BASE_PATH`; do not run the Vite app through a root-level dev command.
 
 ## Pointers
 
