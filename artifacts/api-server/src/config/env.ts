@@ -4,4 +4,5 @@ export const env = {
   clientUrl: optionalUrl(process.env.CLIENT_URL),
   serverUrl: optionalUrl(process.env.SERVER_URL),
   nodeEnv: process.env.NODE_ENV ?? "development",
+  jwtSecret: optionalUrl(process.env.JWT_SECRET) ?? optionalUrl(process.env.SESSION_SECRET),
 };

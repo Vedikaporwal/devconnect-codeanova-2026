@@ -22,8 +22,12 @@ model User {
   name                 String
   username             String         @unique
   bio                  String?
+  headline             String?
   location             String?
   avatarUrl            String?
+  githubUrl            String?
+  linkedinUrl          String?
+  portfolioUrl         String?
   githubId             String?        @unique
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt

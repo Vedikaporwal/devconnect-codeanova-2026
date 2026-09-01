@@ -1,0 +1,61 @@
+import type {
+  ApiResponse,
+  LoginRequest,
+  ProfileUpdateRequest,
+  RegisterRequest,
+  SafeUser,
+} from "@workspace/shared";
+
+const API_ROOT = "/api";
+
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_ROOT}${path}`, {
+    ...init,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+
+  const payload = (await response.json()) as ApiResponse<T>;
+  if (!response.ok || !payload.success) {
+    throw new ApiError(payload.message || "Something went wrong", response.status);
+  }
+
+  return payload.data;
+}
+
+export const authApi = {
+  register: (input: RegisterRequest) =>
+    request<SafeUser>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+  login: (input: LoginRequest) =>
+    request<SafeUser>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+  me: () => request<SafeUser>("/auth/me"),
+  logout: () =>
+    request<null>("/auth/logout", {
+      method: "POST",
+    }),
+  getProfile: () => request<SafeUser>("/users/me"),
+  updateProfile: (input: ProfileUpdateRequest) =>
+    request<SafeUser>("/users/me", {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+};

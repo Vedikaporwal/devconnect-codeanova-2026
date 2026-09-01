@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -21,11 +21,17 @@ import {
   X,
 } from 'lucide-react';
 import {
+  Link,
   Route,
   Switch,
   useLocation,
   Router as WouterRouter,
 } from 'wouter';
+import Login from '@/pages/login';
+import Profile from '@/pages/profile';
+import Register from '@/pages/register';
+import { ProtectedRoute } from '@/components/protected-route';
+import { useAuthStore } from '@/store/auth-store';
 
 const queryClient = new QueryClient();
 
@@ -72,8 +78,8 @@ function Home() {
           ))}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <button onClick={() => scrollTo('explore')} className="px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground" data-testid="button-sign-in">Sign in</button>
-          <button onClick={() => scrollTo('start')} className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="button-create-profile">Create your profile <ArrowUpRight size={14} /></button>
+           <Link href="/login" className="px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground" data-testid="link-sign-in">Sign in</Link>
+           <Link href="/register" className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="link-create-profile">Create your profile <ArrowUpRight size={14} /></Link>
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="grid h-10 w-10 place-items-center rounded-full border border-border text-foreground md:hidden" aria-label="Toggle navigation" data-testid="button-mobile-menu">
           {mobileOpen ? <X size={18} /> : <Menu size={18} />}
@@ -83,7 +89,8 @@ function Home() {
             {['Why DevConnect', 'Features', 'Explore', 'For teams'].map((item, index) => (
               <button key={item} onClick={() => scrollTo(['why', 'features', 'explore', 'teams'][index])} className="block w-full rounded-xl px-4 py-3 text-left text-sm text-muted-foreground hover:bg-secondary hover:text-foreground" data-testid={`link-mobile-${index}`}>{item}</button>
             ))}
-            <button onClick={() => scrollTo('start')} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-mobile-create">Create your profile <ArrowUpRight size={15} /></button>
+             <Link href="/login" className="mt-2 block rounded-xl px-4 py-3 text-center text-sm text-muted-foreground hover:bg-secondary hover:text-foreground" data-testid="link-mobile-sign-in">Sign in</Link>
+             <Link href="/register" className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground" data-testid="link-mobile-create">Create your profile <ArrowUpRight size={15} /></Link>
           </div>
         )}
       </nav>
@@ -201,7 +208,7 @@ function Home() {
                 <div className="relative">
                   <div className="mb-12 flex items-start justify-between">
                     <div className="grid h-12 w-12 place-items-center rounded-full border border-primary/30 bg-primary/10 font-mono text-sm text-primary">{profile.initials}</div>
-                    <button onClick={() => scrollTo('start')} className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary" aria-label={`View ${profile.name}'s profile`} data-testid={`button-view-profile-${index}`}><ArrowUpRight size={16} /></button>
+               <Link href="/profile" className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary" aria-label={`View ${profile.name}'s profile`} data-testid={`link-view-profile-${index}`}><ArrowUpRight size={16} /></Link>
                   </div>
                   <p className="font-mono text-[10px] text-primary">{profile.handle}</p>
                   <h3 className="mt-1 text-2xl font-medium tracking-[-.035em]">{profile.name}</h3>
@@ -272,7 +279,7 @@ function Home() {
               <div className="grid h-20 w-20 place-items-center rounded-2xl border border-primary/30 bg-primary/10 font-mono text-xl text-primary">YC</div>
               <div><div className="mb-2 flex items-center gap-2"><h3 className="text-2xl tracking-[-.04em]">Your name, on your terms.</h3><span className="rounded-full bg-primary/10 px-2 py-1 font-mono text-[9px] text-primary">AVAILABLE</span></div><p className="text-sm leading-relaxed text-muted-foreground">Start with the work you want people to ask you about.</p></div>
             </div>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2"><button onClick={() => scrollTo('top')} className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="button-build-profile">Build my profile <ArrowUpRight size={15} /></button><button onClick={copyProfile} className="flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground" data-testid="button-copy-profile-link">{copied ? <Check size={15} /> : <Copy size={15} />} {copied ? 'Link copied' : 'See a sample profile'}</button></div>
+             <div className="mt-8 grid gap-3 sm:grid-cols-2"><Link href="/register" className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="link-build-profile">Build my profile <ArrowUpRight size={15} /></Link><button onClick={copyProfile} className="flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground" data-testid="button-copy-profile-link">{copied ? <Check size={15} /> : <Copy size={15} />} {copied ? 'Link copied' : 'See a sample profile'}</button></div>
           </div>
         </div>
       </section>
@@ -295,9 +302,20 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/profile" component={ProtectedProfile} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
+  );
+}
+
+function ProtectedProfile() {
+  return (
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
   );
 }
 
@@ -307,6 +325,12 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
 }
 
 function App() {
+  const hydrate = useAuthStore((state) => state.hydrate);
+
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

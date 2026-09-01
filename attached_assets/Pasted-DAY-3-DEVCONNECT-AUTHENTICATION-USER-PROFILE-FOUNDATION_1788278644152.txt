@@ -1,0 +1,612 @@
+DAY 3 — DEVCONNECT AUTHENTICATION & USER PROFILE FOUNDATION
+
+IMPORTANT:
+This is an EXISTING DevConnect project.
+
+DO NOT create a new project.
+DO NOT create a new GitHub repository.
+DO NOT reset, reinitialize, force-push, or rewrite Git history.
+DO NOT change the existing Git remote.
+DO NOT change the existing main branch.
+DO NOT overwrite or remove the completed Day 1 or Day 2 work.
+
+The existing GitHub remote is already configured as origin/main.
+
+Before making changes:
+1. Inspect the existing project structure.
+2. Inspect the existing Prisma schema and migrations.
+3. Inspect the existing client/server/shared architecture.
+4. Preserve all existing working functionality.
+5. Build on top of the current codebase.
+
+DAY 1 and DAY 2 are COMPLETE and must remain intact.
+
+--------------------------------------------------
+CURRENT ARCHITECTURE
+--------------------------------------------------
+
+/client
+/server
+/shared
+
+Frontend:
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- React Router
+- TanStack React Query
+- Zustand
+
+Backend:
+- Node.js
+- Express
+- TypeScript
+
+Database:
+- PostgreSQL
+- Prisma ORM
+
+--------------------------------------------------
+DAY 3 GOAL
+--------------------------------------------------
+
+Implement the authentication and user-profile foundation for DevConnect.
+
+Do NOT implement projects, blogs, connections, endorsements, notifications, or the complete dashboard yet.
+
+Keep the scope strictly limited to authentication and the basic developer profile foundation.
+
+--------------------------------------------------
+1. AUTHENTICATION
+--------------------------------------------------
+
+Implement secure authentication using:
+
+- Email
+- Password
+- JWT
+- bcrypt/bcryptjs password hashing
+
+Create:
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+POST /api/auth/logout
+
+GET /api/auth/me
+
+Expected API response format:
+
+{
+  "success": boolean,
+  "data": any,
+  "message": string
+}
+
+Registration:
+
+Request:
+{
+  "name": "Developer Name",
+  "email": "developer@example.com",
+  "password": "password123"
+}
+
+Requirements:
+- Validate name
+- Validate email
+- Validate password
+- Prevent duplicate email registration
+- Hash passwords before storing
+- Never return password hashes to the frontend
+- Generate JWT after successful registration
+- Return safe user information
+
+Login:
+
+Request:
+{
+  "email": "developer@example.com",
+  "password": "password123"
+}
+
+Requirements:
+- Validate credentials
+- Compare hashed password
+- Return JWT and safe user information
+- Never expose password/hash
+
+Authentication middleware:
+
+Create reusable authentication middleware that:
+- Reads the JWT securely
+- Verifies the JWT
+- Identifies the current user
+- Attaches the authenticated user to the request
+- Returns a consistent 401 response for invalid/missing authentication
+
+--------------------------------------------------
+2. JWT SECURITY
+--------------------------------------------------
+
+Use JWT_SECRET from server environment variables.
+
+NEVER expose JWT_SECRET to frontend code.
+
+Do not hardcode secrets.
+
+Prefer secure HTTP-only cookies for authentication if compatible with the existing architecture.
+
+Configure cookies appropriately for development and production.
+
+Do not store sensitive secrets in localStorage.
+
+--------------------------------------------------
+3. LOGOUT
+--------------------------------------------------
+
+Implement:
+
+POST /api/auth/logout
+
+It should invalidate/remove the authentication cookie/session mechanism being used.
+
+Return:
+
+{
+  "success": true,
+  "data": null,
+  "message": "Logged out successfully"
+}
+
+--------------------------------------------------
+4. CURRENT USER
+--------------------------------------------------
+
+Implement:
+
+GET /api/auth/me
+
+This endpoint must require authentication.
+
+Return the currently authenticated user's safe profile information.
+
+Never return:
+- password
+- passwordHash
+- JWT secret
+- other sensitive authentication information
+
+--------------------------------------------------
+5. USER PROFILE
+--------------------------------------------------
+
+Use the existing Day 2 User model.
+
+Do NOT redesign the database unnecessarily.
+
+Add only fields that are genuinely required for the basic developer profile if they are missing.
+
+A developer profile should support information such as:
+
+- name
+- username if supported by the existing schema
+- email
+- bio
+- avatar/profile image URL
+- location
+- headline
+- GitHub profile URL
+- LinkedIn profile URL
+- portfolio URL
+
+Do not add unnecessary profile fields.
+
+If a migration is required, create a proper Prisma migration.
+
+Do not modify existing migrations.
+
+--------------------------------------------------
+6. PROFILE API
+--------------------------------------------------
+
+Create authenticated profile endpoints:
+
+GET /api/users/me
+
+PUT /api/users/me
+
+The authenticated user should be able to view and update their own profile.
+
+Validate incoming data.
+
+Never allow the client to update:
+- password hash
+- role/admin fields
+- internal IDs
+- authentication secrets
+
+Use reusable controller/service structure.
+
+--------------------------------------------------
+7. FRONTEND AUTHENTICATION
+--------------------------------------------------
+
+Create clean authentication pages:
+
+/login
+
+/register
+
+Use the existing React Router.
+
+Create:
+
+- Login page
+- Registration page
+- Authentication form components
+- Form validation
+- Loading states
+- Error states
+- Success feedback
+
+Design must match the existing DevConnect visual identity.
+
+Do NOT redesign the existing landing page unnecessarily.
+
+--------------------------------------------------
+8. AUTH STATE
+--------------------------------------------------
+
+Use the existing Zustand setup for lightweight client authentication state.
+
+Create a clean auth store capable of tracking:
+
+- current user
+- authenticated/loading state
+- login
+- logout
+- setUser
+- clearUser
+
+Use TanStack React Query for server state/API requests where appropriate.
+
+Do not duplicate server state unnecessarily between React Query and Zustand.
+
+--------------------------------------------------
+9. PROTECTED ROUTE
+--------------------------------------------------
+
+Create a reusable ProtectedRoute component.
+
+For now, create a simple protected profile route:
+
+/profile
+
+Unauthenticated users should be redirected to:
+
+/login
+
+Authenticated users should be able to access:
+
+/profile
+
+--------------------------------------------------
+10. PROFILE PAGE
+--------------------------------------------------
+
+Create a professional developer profile page.
+
+Include:
+
+- Profile avatar placeholder
+- Developer name
+- Headline
+- Bio
+- Location
+- GitHub link
+- LinkedIn link
+- Portfolio link
+- Edit Profile button
+
+Create an Edit Profile interface.
+
+The UI must be:
+
+- responsive
+- modern
+- clean
+- developer-focused
+- accessible
+- user-friendly
+
+Use the existing DevConnect design language.
+
+Include subtle animations and hover interactions, but avoid excessive animation.
+
+--------------------------------------------------
+11. NAVIGATION
+--------------------------------------------------
+
+Update the existing navigation only where necessary.
+
+When unauthenticated:
+
+- Login
+- Register
+- Explore Developers
+
+When authenticated:
+
+- Profile
+- Logout
+
+Do not implement a full dashboard yet.
+
+--------------------------------------------------
+12. BACKEND STRUCTURE
+--------------------------------------------------
+
+Keep the existing clean backend architecture.
+
+Use:
+
+server/src/
+
+config/
+controllers/
+middleware/
+routes/
+services/
+utils/
+types/
+
+Create authentication-related modules in the appropriate locations.
+
+Do not put business logic directly inside route files.
+
+Use controllers → services → Prisma/database separation.
+
+--------------------------------------------------
+13. SHARED TYPES
+--------------------------------------------------
+
+Extend /shared only where necessary.
+
+Create reusable types for:
+
+- User
+- Auth response
+- Login request
+- Register request
+- Profile update request
+- ApiResponse<T>
+
+Never expose sensitive database fields through shared frontend types.
+
+--------------------------------------------------
+14. VALIDATION
+--------------------------------------------------
+
+Use the minimum necessary validation dependency if one is already installed.
+
+Avoid adding unnecessary dependencies.
+
+Validate:
+
+Registration:
+- valid email
+- reasonable name length
+- password minimum length
+
+Login:
+- valid email
+- required password
+
+Profile:
+- valid URLs where applicable
+- reasonable text lengths
+
+Return consistent validation errors.
+
+--------------------------------------------------
+15. ERROR HANDLING
+--------------------------------------------------
+
+Use the existing centralized error middleware.
+
+All errors must follow:
+
+{
+  "success": false,
+  "data": null,
+  "message": "Error message"
+}
+
+Do not leak:
+- stack traces
+- passwords
+- JWT secrets
+- database credentials
+- internal sensitive information
+
+--------------------------------------------------
+16. DATABASE
+--------------------------------------------------
+
+Use the existing PostgreSQL + Prisma setup.
+
+Do NOT create duplicate User models.
+
+Do NOT delete existing Day 2 models.
+
+Do NOT modify existing relationships unless required for authentication/profile functionality.
+
+If schema changes are necessary:
+
+1. Update prisma/schema.prisma
+2. Run Prisma validation
+3. Generate Prisma client
+4. Create a NEW migration
+5. Apply the migration
+6. Verify the database
+
+Never edit an old migration to hide changes.
+
+--------------------------------------------------
+17. ENVIRONMENT
+--------------------------------------------------
+
+Use the existing environment configuration.
+
+Required server-side variables include:
+
+DATABASE_URL
+JWT_SECRET
+
+Frontend must NEVER receive:
+
+DATABASE_URL
+JWT_SECRET
+GITHUB_CLIENT_SECRET
+CLOUDINARY_API_SECRET
+
+Keep secrets server-side only.
+
+Do not add real secrets to Git.
+
+Ensure .env remains ignored.
+
+--------------------------------------------------
+18. GITHUB OAUTH
+--------------------------------------------------
+
+DO NOT implement GitHub OAuth yet unless it is already explicitly required by the existing Day 3 specification.
+
+The existing GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment placeholders must remain available for a future authentication stage.
+
+Do not spend time implementing GitHub OAuth in this Day 3 task.
+
+--------------------------------------------------
+19. DO NOT IMPLEMENT THESE FEATURES
+--------------------------------------------------
+
+Absolutely DO NOT implement:
+
+- Projects
+- Blog creation
+- Blog editor
+- Connections
+- Connection requests
+- Endorsements
+- Notifications
+- Real-time sockets
+- Full dashboard
+- Cloudinary uploads
+- GitHub OAuth
+- Search/discovery system
+- Admin panel
+- Deployment changes
+
+Those belong to later stages.
+
+--------------------------------------------------
+20. UI QUALITY
+--------------------------------------------------
+
+Preserve the existing premium DevConnect landing page.
+
+The authentication/profile UI should feel like the SAME PRODUCT.
+
+Design direction:
+
+- Premium developer platform
+- Dark modern interface
+- Strong typography
+- Lime/green accent used consistently with existing branding
+- Subtle grid/background details
+- Clean cards
+- Good spacing
+- Smooth hover states
+- Responsive mobile layout
+- Accessible contrast
+- Clear form feedback
+- Professional SaaS/product quality
+
+Do not introduce a completely different visual theme.
+
+--------------------------------------------------
+21. TESTING AND VERIFICATION
+--------------------------------------------------
+
+Before finishing, verify:
+
+1. npm/yarn dependencies install correctly
+2. TypeScript checks pass
+3. Prisma validation passes
+4. Prisma client generates successfully
+5. Database migration succeeds if one was required
+6. Existing frontend still renders
+7. Existing landing page still works
+8. GET /api/health still works
+9. Registration works
+10. Login works
+11. /api/auth/me works for authenticated users
+12. Logout works
+13. Protected /profile redirects unauthenticated users
+14. Authenticated users can access /profile
+15. Profile update works
+16. No password/hash is returned in API responses
+17. No secrets are exposed to frontend code
+18. No console/runtime errors
+19. Desktop UI works
+20. Mobile UI works
+
+--------------------------------------------------
+22. GIT SAFETY — VERY IMPORTANT
+--------------------------------------------------
+
+DO NOT:
+
+- git reset
+- git reset --hard
+- git rebase
+- git push --force
+- delete the existing repository
+- change origin
+- create another remote
+- create another branch unless absolutely necessary
+- overwrite previous commits
+- modify unrelated completed work
+
+Preserve the existing origin/main history.
+
+At the end, inspect the Git diff/status.
+
+The changes should contain ONLY the Day 3 implementation.
+
+If unrelated files appear modified, investigate and revert only the unrelated changes without touching the completed Day 1/Day 2 work.
+
+Do NOT commit automatically.
+
+STOP after implementation and verification.
+
+Report:
+
+- files created
+- files modified
+- API endpoints created
+- Prisma changes
+- frontend pages created
+- tests/checks performed
+- whether the existing /api/health still works
+- whether TypeScript checks pass
+- whether there are unrelated changes
+- current git status
+
+WAIT FOR MY REVIEW BEFORE COMMITTING.
+
+This is strictly DAY 3.
