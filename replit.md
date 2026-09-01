@@ -28,12 +28,13 @@ DevConnect is a developer networking and portfolio platform that makes technical
  - `artifacts/api-server` — Express API, health route, controllers, services, and middleware
  - `lib/shared` — shared `ApiResponse<T>` contract
  - `lib/api-spec/openapi.yaml` — source of truth for the API contract
- - `prisma/schema.prisma` — PostgreSQL Prisma foundation; domain models are intentionally deferred
+ - `prisma/schema.prisma` — PostgreSQL Prisma schema for users, projects, blog posts, skills, endorsements, and connections
+ - `prisma/migrations` — applied development migrations
 
 ## Architecture decisions
 
 - Day 1 uses the existing pnpm workspace's `artifacts/` and `lib/` conventions rather than adding parallel top-level client/server packages.
-- The public experience is intentionally preview-only; product capabilities are not implemented until later days.
+- The public experience remains preview-only; Day 2 adds database structure but does not expose product capabilities through the API or UI.
 - `/api/health` returns the shared `ApiResponse<T>` envelope and `/api/healthz` remains as a compatibility alias for the scaffold.
 
 ## Product

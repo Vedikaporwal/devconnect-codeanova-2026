@@ -12,7 +12,8 @@ Complete:
 - `GET /api/health` with the Day 1 response contract
 - Centralized error handling, environment configuration, and CORS using `CLIENT_URL`
 - Shared `ApiResponse<T>` type in `lib/shared`
-- PostgreSQL-only Prisma foundation in `prisma/schema.prisma` with no domain models yet
+- PostgreSQL-only Prisma schema in `prisma/schema.prisma` with User, Project, BlogPost, Skill, UserSkill, Endorsement, and Connection models
+- Applied migration in `prisma/migrations/20260901155105_day2_database_schema`
 - OpenAPI contract and generated client/Zod libraries in `lib/api-spec`, `lib/api-client-react`, and `lib/api-zod`
 
 Authentication, OAuth, profiles, projects, blogs, search, connections, uploads, notifications, and dashboards are intentionally not part of Day 1.
@@ -33,7 +34,13 @@ Authentication, OAuth, profiles, projects, blogs, search, connections, uploads, 
    pnpm prisma:generate
    ```
 
-4. Start the web app and API using the configured workflows, or run:
+4. Create and apply a development migration after schema changes:
+
+   ```bash
+   pnpm exec prisma migrate dev --name describe-your-change
+   ```
+
+5. Start the web app and API using the configured workflows, or run:
 
    ```bash
    pnpm --filter @workspace/devconnect run dev

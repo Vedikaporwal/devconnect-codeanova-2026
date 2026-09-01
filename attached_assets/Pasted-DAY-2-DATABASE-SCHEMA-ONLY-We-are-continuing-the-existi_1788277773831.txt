@@ -1,0 +1,280 @@
+DAY 2 — DATABASE SCHEMA ONLY
+
+We are continuing the existing DevConnect internship project.
+
+IMPORTANT:
+This project already has a completed and working Day 1 foundation.
+Do NOT rebuild the project.
+Do NOT replace the architecture.
+Do NOT change the frontend design.
+Do NOT remove existing functionality.
+Do NOT rewrite working files unnecessarily.
+
+Treat the current main branch as the stable Day 1 baseline.
+
+DAY 1 ARCHITECTURE MUST REMAIN:
+
+/client  → React + Vite + TypeScript
+/server  → Node.js + Express + TypeScript
+/shared  → shared TypeScript types/utilities
+PostgreSQL → Prisma ORM
+
+The existing landing page, Express API, /api/health endpoint, shared ApiResponse type, environment configuration, Prisma setup, Tailwind styling, React Router, TanStack Query and Zustand setup must continue working.
+
+CURRENT TASK:
+Implement ONLY DAY 2 of the internship brief:
+
+"Database schema — Users, Projects, BlogPosts, Skills, Endorsements, Connections; migrations"
+
+Do NOT implement Day 3 or later features.
+
+DO NOT implement:
+- authentication
+- JWT
+- GitHub OAuth
+- login/register
+- profile UI
+- project UI
+- blog UI
+- connections UI
+- endorsements UI
+- notifications
+- Socket.io
+- Cloudinary
+- dashboard
+
+DATABASE REQUIREMENTS:
+
+Use PostgreSQL with Prisma ORM.
+
+Update the existing Prisma schema rather than creating a second Prisma setup.
+
+Create these main models:
+
+1. User
+2. Project
+3. BlogPost
+4. Skill
+5. Endorsement
+6. Connection
+
+A supporting UserSkill join model may be created because users need to have multiple skills and skills can belong to multiple users.
+
+USER MODEL:
+
+Include appropriate fields for the future application:
+
+- id
+- email
+- passwordHash (nullable for now because authentication is Day 3)
+- name
+- username (unique)
+- bio (optional)
+- location (optional)
+- avatarUrl (optional)
+- githubId (optional and unique)
+- createdAt
+- updatedAt
+
+Add appropriate Prisma relations to:
+- projects
+- blog posts
+- skills through UserSkill
+- endorsements given
+- endorsements received
+- connections sent
+- connections received
+
+Do not implement authentication logic.
+
+PROJECT MODEL:
+
+Include:
+
+- id
+- title
+- description
+- techStack
+- liveUrl (optional)
+- repoUrl (optional)
+- imageUrl (optional)
+- ownerId
+- createdAt
+- updatedAt
+
+A project belongs to one User.
+
+A User can have many Projects.
+
+BLOGPOST MODEL:
+
+Include:
+
+- id
+- title
+- slug (unique)
+- content
+- excerpt (optional)
+- published
+- authorId
+- createdAt
+- updatedAt
+
+A blog post belongs to one User.
+
+A User can have many BlogPosts.
+
+Do not implement Markdown rendering yet.
+
+SKILL MODEL:
+
+Include:
+
+- id
+- name
+- slug (unique)
+- createdAt
+
+A Skill can belong to many Users through UserSkill.
+
+USER SKILL MODEL:
+
+Use this as a many-to-many join table.
+
+Include:
+
+- userId
+- skillId
+- createdAt
+
+Make the combination of userId + skillId unique.
+
+ENDORSEMENT MODEL:
+
+Include:
+
+- id
+- endorserId
+- endorsedUserId
+- skillId
+- createdAt
+
+An endorsement represents one developer endorsing another developer for a specific skill.
+
+Prevent duplicate endorsements by the same user for the same user and skill.
+
+Add an appropriate composite unique constraint.
+
+CONNECTION MODEL:
+
+Include:
+
+- id
+- senderId
+- receiverId
+- status
+- createdAt
+- updatedAt
+
+Create a ConnectionStatus enum:
+
+PENDING
+ACCEPTED
+REJECTED
+
+A connection has:
+- one sender User
+- one receiver User
+
+Prevent duplicate connection requests in the same direction with an appropriate unique constraint.
+
+Use clear Prisma relation names where multiple relations point to User.
+
+DATABASE QUALITY:
+
+- Use UUID or another stable generated ID strategy consistently.
+- Add createdAt and updatedAt where appropriate.
+- Add indexes on fields that will commonly be queried.
+- Add appropriate unique constraints.
+- Use proper onDelete behavior.
+- Avoid storing derived values such as endorsement counts; those can be calculated later with Prisma queries.
+- Do not add unnecessary models beyond what is required for Day 2.
+
+PRISMA:
+
+1. Update the existing prisma/schema.prisma.
+2. Validate the schema.
+3. Generate the Prisma client.
+4. Create a Prisma migration for the complete Day 2 schema.
+5. Apply the migration to the configured PostgreSQL database if DATABASE_URL is available.
+6. Do NOT create any authentication-related migration logic.
+7. Do NOT seed fake users or application data unless absolutely necessary for migration verification.
+
+IMPORTANT FILE SAFETY:
+
+Do not create duplicate Prisma configuration files.
+Do not create another schema.prisma elsewhere.
+Use the existing project's Prisma configuration.
+
+SHARED TYPES:
+
+If the project already has shared types related to API responses, preserve them.
+
+Only add database-related shared types if they are genuinely useful.
+Do not duplicate Prisma-generated types unnecessarily.
+
+README:
+
+Update the README only where necessary to document:
+- PostgreSQL + Prisma
+- database setup
+- DATABASE_URL
+- how to run Prisma generation
+- how to run migrations
+
+Do not rewrite the entire README.
+
+VERIFICATION:
+
+After implementation, run:
+
+- Prisma schema validation
+- Prisma client generation
+- database migration
+- TypeScript checks
+- existing frontend checks
+- existing backend checks
+
+Also verify that the existing:
+
+GET /api/health
+
+still works and returns:
+
+{
+  "success": true,
+  "data": {
+    "status": "ok"
+  },
+  "message": "DevConnect API is running"
+}
+
+Do not change the response format.
+
+FINAL REQUIREMENT:
+
+At the end, give a concise report containing:
+
+1. Files created/modified
+2. Prisma models created
+3. Migration name
+4. Whether the migration successfully applied
+5. Whether Prisma generation succeeded
+6. Whether TypeScript checks passed
+7. Whether /api/health still works
+8. Any remaining issue that requires manual action
+
+Do NOT commit or push to GitHub automatically.
+I will review the changes first and commit them manually.
+
+This is strictly DAY 2.
