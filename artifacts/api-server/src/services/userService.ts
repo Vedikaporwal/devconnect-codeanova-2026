@@ -127,18 +127,19 @@ export const updateUserProfile = async (
   id: string,
   input: ProfileUpdateRequest,
 ): Promise<SafeUser> => {
+  const data: ProfileUpdateRequest = {};
+  if (input.name !== undefined) data.name = input.name.trim();
+  if (input.bio !== undefined) data.bio = input.bio;
+  if (input.headline !== undefined) data.headline = input.headline;
+  if (input.location !== undefined) data.location = input.location;
+  if (input.avatarUrl !== undefined) data.avatarUrl = input.avatarUrl;
+  if (input.githubUrl !== undefined) data.githubUrl = input.githubUrl;
+  if (input.linkedinUrl !== undefined) data.linkedinUrl = input.linkedinUrl;
+  if (input.portfolioUrl !== undefined) data.portfolioUrl = input.portfolioUrl;
+
   const user = await prisma.user.update({
     where: { id },
-    data: {
-      name: input.name.trim(),
-      bio: input.bio,
-      headline: input.headline,
-      location: input.location,
-      avatarUrl: input.avatarUrl,
-      githubUrl: input.githubUrl,
-      linkedinUrl: input.linkedinUrl,
-      portfolioUrl: input.portfolioUrl,
-    },
+    data,
   });
 
   return toSafeUser(user);

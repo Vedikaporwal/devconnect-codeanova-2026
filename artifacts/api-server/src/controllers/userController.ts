@@ -30,20 +30,31 @@ const parseProfileInput = (body: unknown): ProfileUpdateRequest => {
     throw new AppError(400, "Profile data is required");
   }
   const input = body as Record<string, unknown>;
-  if (typeof input.name !== "string" || input.name.trim().length < 2 || input.name.trim().length > 80) {
-    throw new AppError(400, "Name must be between 2 and 80 characters");
+  const profile: ProfileUpdateRequest = {};
+
+  if (input.name !== undefined) {
+    if (
+      typeof input.name !== "string" ||
+      input.name.trim().length < 2 ||
+      input.name.trim().length > 80
+    ) {
+      throw new AppError(400, "Name must be between 2 and 80 characters");
+    }
+    profile.name = input.name.trim();
+  }
+  if (input.bio !== undefined) profile.bio = optionalText(input.bio, 500);
+  if (input.headline !== undefined) profile.headline = optionalText(input.headline, 120);
+  if (input.location !== undefined) profile.location = optionalText(input.location, 120);
+  if (input.avatarUrl !== undefined) profile.avatarUrl = optionalUrl(input.avatarUrl);
+  if (input.githubUrl !== undefined) profile.githubUrl = optionalUrl(input.githubUrl);
+  if (input.linkedinUrl !== undefined) profile.linkedinUrl = optionalUrl(input.linkedinUrl);
+  if (input.portfolioUrl !== undefined) profile.portfolioUrl = optionalUrl(input.portfolioUrl);
+
+  if (Object.keys(profile).length === 0) {
+    throw new AppError(400, "At least one profile field is required");
   }
 
-  return {
-    name: input.name,
-    bio: optionalText(input.bio, 500),
-    headline: optionalText(input.headline, 120),
-    location: optionalText(input.location, 120),
-    avatarUrl: optionalUrl(input.avatarUrl),
-    githubUrl: optionalUrl(input.githubUrl),
-    linkedinUrl: optionalUrl(input.linkedinUrl),
-    portfolioUrl: optionalUrl(input.portfolioUrl),
-  };
+  return profile;
 };
 
 export const getMyProfile: RequestHandler = async (req, res) => {

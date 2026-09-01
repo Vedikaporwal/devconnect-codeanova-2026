@@ -32,14 +32,14 @@ export interface LoginRequest {
 }
 
 export interface ProfileUpdateRequest {
-  name: string;
-  bio: string | null;
-  headline: string | null;
-  location: string | null;
-  avatarUrl: string | null;
-  githubUrl: string | null;
-  linkedinUrl: string | null;
-  portfolioUrl: string | null;
+  name?: string;
+  bio?: string | null;
+  headline?: string | null;
+  location?: string | null;
+  avatarUrl?: string | null;
+  githubUrl?: string | null;
+  linkedinUrl?: string | null;
+  portfolioUrl?: string | null;
 }
 
 export type AuthResponse = ApiResponse<SafeUser>;

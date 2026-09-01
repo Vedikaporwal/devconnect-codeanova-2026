@@ -179,6 +179,9 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
+      '@workspace/db':
+        specifier: workspace:*
+        version: link:../../lib/db
       '@workspace/api-zod':
         specifier: workspace:*
         version: link:../../lib/api-zod
@@ -244,6 +247,9 @@ importers:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.17)(react@19.1.0)(use-sync-external-store@1.6.0(react@19.1.0))
     devDependencies:
+      '@workspace/shared':
+        specifier: workspace:*
+        version: link:../../lib/shared
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.83.0(react@19.1.0))
