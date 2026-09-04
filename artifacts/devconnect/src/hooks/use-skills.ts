@@ -1,0 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { skillsApi } from "@/lib/api";
+export const useSkills = () => useQuery({ queryKey: ["skills"], queryFn: skillsApi.list, staleTime: 60_000 });
+export const useUserSkills = (userId: string) => useQuery({ queryKey: ["user-skills", userId], queryFn: () => skillsApi.listForUser(userId), enabled: Boolean(userId), staleTime: 30_000 });
+export function useSkillMutations(userId?: string) { const client = useQueryClient(); const refresh = () => { void client.invalidateQueries({ queryKey: ["skills"] }); if (userId) void client.invalidateQueries({ queryKey: ["user-skills", userId] }); }; return { add: useMutation({ mutationFn: skillsApi.add, onSuccess: refresh }), remove: useMutation({ mutationFn: skillsApi.remove, onSuccess: refresh }) }; }

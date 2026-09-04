@@ -1,0 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { endorsementsApi } from "@/lib/api";
+export const useEndorsements = (userId: string) => useQuery({ queryKey: ["endorsements", userId], queryFn: () => endorsementsApi.list(userId), enabled: Boolean(userId), staleTime: 15_000 });
+export function useEndorsementMutations(userId: string) { const client = useQueryClient(); const refresh = () => client.invalidateQueries({ queryKey: ["endorsements", userId] }); return { add: useMutation({ mutationFn: (skillId: string) => endorsementsApi.add(userId, skillId), onSuccess: refresh }), remove: useMutation({ mutationFn: (skillId: string) => endorsementsApi.remove(userId, skillId), onSuccess: refresh }) }; }

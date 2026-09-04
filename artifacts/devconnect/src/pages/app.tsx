@@ -6,6 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useProjects } from "@/hooks/use-projects";
 import { useBlogs } from "@/hooks/use-blogs";
 import { useAuthStore } from "@/store/auth-store";
+import { useConnections } from "@/hooks/use-connections";
+import { EndorsementList } from "@/components/endorsement-list";
+import { useEndorsements } from "@/hooks/use-endorsements";
 
 const initialsFor = (name: string) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("");
@@ -14,6 +17,8 @@ export default function AppHome() {
   const { user } = useAuthStore();
   const projectsQuery = useProjects();
   const blogsQuery = useBlogs();
+  const connectionsQuery = useConnections();
+  const endorsementsQuery = useEndorsements(user?.id ?? "");
   const projects = projectsQuery.data ?? [];
   const firstName = user?.name.split(" ")[0] ?? "builder";
   const profileComplete = [user?.headline, user?.bio, user?.location, user?.avatarUrl, user?.githubUrl, user?.linkedinUrl, user?.portfolioUrl].filter(Boolean).length;
@@ -52,6 +57,7 @@ export default function AppHome() {
             <p className="text-xl font-medium tracking-[-.03em]">{projects.length ? "Add the why." : "Ship the first signal."}</p>
             <p className="mt-2 text-sm text-muted-foreground">{projects.length ? "A little context makes good work memorable." : "Start with a project people can ask you about."}</p>
           </div>
+          <div className="soft-card rounded-2xl p-5" data-testid="stat-connections"><div className="mb-10 flex items-center justify-between"><UserRound size={17} className="text-cyan-300" /><span className="font-mono text-[9px] uppercase tracking-[.16em] text-muted-foreground">Network</span></div><p className="text-4xl font-semibold tracking-[-.06em]">{connectionsQuery.data?.summary.accepted ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">accepted connections</p>{(connectionsQuery.data?.summary.incomingPending ?? 0) > 0 && <p className="mt-2 text-xs text-primary">{connectionsQuery.data?.summary.incomingPending} request{connectionsQuery.data.summary.incomingPending === 1 ? "" : "s"} waiting</p>}</div>
         </section>
 
         <section className="relative py-5" aria-labelledby="recent-projects-heading">
@@ -84,6 +90,7 @@ export default function AppHome() {
             </div>
           </div>
         </section>
+        <section className="relative mt-10 grid gap-5 border-t border-border pt-8 md:grid-cols-2"><div className="soft-card rounded-2xl p-6 sm:p-8"><div className="mb-6 font-mono text-[10px] uppercase tracking-[.18em] text-primary">03 / Community signal</div><h2 className="text-2xl font-medium tracking-[-.04em]">Your endorsements.</h2><div className="mt-5"><EndorsementList summaries={endorsementsQuery.data?.summaries ?? []} /></div></div><div className="soft-card rounded-2xl p-6 sm:p-8"><div className="mb-6 font-mono text-[10px] uppercase tracking-[.18em] text-primary">04 / Incoming signal</div><h2 className="text-2xl font-medium tracking-[-.04em]">Connection requests.</h2>{connectionsQuery.data?.incoming.filter((item) => item.status === "PENDING").length ? <div className="mt-5 space-y-3">{connectionsQuery.data.incoming.filter((item) => item.status === "PENDING").map((item) => <Link key={item.id} href={`/profile/${item.sender.id}`} className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm hover:border-primary/40"><span>{item.sender.name}</span><ArrowUpRight size={14} className="text-primary" /></Link>)}</div> : <p className="mt-5 text-sm text-muted-foreground">No pending requests right now.</p>}</div></section>
       </div>
     </AppShell>
   );

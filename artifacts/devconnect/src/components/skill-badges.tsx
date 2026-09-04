@@ -1,0 +1,3 @@
+import type { UserSkill } from "@workspace/shared";
+
+export function SkillBadges({ skills, emptyLabel = "No skills added yet." }: { skills: UserSkill[]; emptyLabel?: string }) { return skills.length ? <div className="flex flex-wrap gap-2">{skills.map((skill) => <span key={skill.id} className="rounded-md border border-primary/20 bg-primary/5 px-3 py-2 font-mono text-xs text-primary">{skill.name}</span>)}</div> : <p className="text-sm text-muted-foreground">{emptyLabel}</p>; }

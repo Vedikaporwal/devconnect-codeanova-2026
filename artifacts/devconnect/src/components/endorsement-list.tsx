@@ -1,0 +1,4 @@
+import type { EndorsementSummary } from "@workspace/shared";
+import { ThumbsUp } from "lucide-react";
+
+export function EndorsementList({ summaries }: { summaries: EndorsementSummary[] }) { return <div className="grid gap-2 sm:grid-cols-2">{summaries.length ? summaries.map((summary) => <div key={summary.skill.id} className="flex items-center justify-between rounded-xl border border-border bg-background/30 px-4 py-3"><span className="font-mono text-xs text-muted-foreground">{summary.skill.name}</span><span className="flex items-center gap-1.5 text-xs text-primary"><ThumbsUp size={13} /> {summary.count}</span></div>) : <p className="text-sm text-muted-foreground">No endorsements yet.</p>}</div>; }

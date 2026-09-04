@@ -129,3 +129,66 @@ export interface PublicProject {
   liveUrl: string | null;
   imageUrl: string | null;
 }
+
+export type ConnectionStatus = "PENDING" | "ACCEPTED" | "REJECTED";
+
+export interface ConnectionUser {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+  headline: string | null;
+}
+
+export interface Connection {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  status: ConnectionStatus;
+  createdAt: string;
+  updatedAt: string;
+  sender: ConnectionUser;
+  receiver: ConnectionUser;
+}
+
+export interface ConnectionSummary {
+  total: number;
+  accepted: number;
+  incomingPending: number;
+  outgoingPending: number;
+}
+
+export interface ConnectionsResponse {
+  incoming: Connection[];
+  outgoing: Connection[];
+  accepted: Connection[];
+  summary: ConnectionSummary;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface UserSkill extends Skill {
+  createdAt: string;
+}
+
+export interface Endorsement {
+  id: string;
+  skill: Skill;
+  endorser: ConnectionUser;
+  createdAt: string;
+}
+
+export interface EndorsementSummary {
+  skill: Skill;
+  count: number;
+  endorsedByViewer: boolean;
+}
+
+export interface UserEndorsementsResponse {
+  summaries: EndorsementSummary[];
+  endorsements: Endorsement[];
+}

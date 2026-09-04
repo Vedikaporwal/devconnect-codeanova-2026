@@ -11,6 +11,12 @@ import type {
   CreateBlogRequest,
   UpdateBlogRequest,
   PublicDeveloper,
+  Connection,
+  ConnectionsResponse,
+  Endorsement,
+  Skill,
+  UserEndorsementsResponse,
+  UserSkill,
 } from "@workspace/shared";
 
 const API_ROOT = "/api";
@@ -100,4 +106,25 @@ export const discoveryApi = {
     return request<PublicDeveloper[]>(`/users/discover${query ? `?${query}` : ""}`);
   },
   get: (id: string) => request<PublicDeveloper>(`/users/${id}`),
+};
+
+export const connectionsApi = {
+  list: () => request<ConnectionsResponse>("/connections"),
+  create: (userId: string) => request<Connection>(`/connections/${userId}`, { method: "POST" }),
+  accept: (id: string) => request<Connection>(`/connections/${id}/accept`, { method: "PATCH" }),
+  reject: (id: string) => request<Connection>(`/connections/${id}/reject`, { method: "PATCH" }),
+  remove: (id: string) => request<null>(`/connections/${id}`, { method: "DELETE" }),
+};
+
+export const skillsApi = {
+  list: () => request<Skill[]>("/skills"),
+  listForUser: (userId: string) => request<UserSkill[]>(`/users/${userId}/skills`),
+  add: (skillId: string) => request<UserSkill>("/users/me/skills", { method: "POST", body: JSON.stringify({ skillId }) }),
+  remove: (skillId: string) => request<null>(`/users/me/skills/${skillId}`, { method: "DELETE" }),
+};
+
+export const endorsementsApi = {
+  list: (userId: string) => request<UserEndorsementsResponse>(`/users/${userId}/endorsements`),
+  add: (userId: string, skillId: string) => request<Endorsement>(`/users/${userId}/endorsements`, { method: "POST", body: JSON.stringify({ skillId }) }),
+  remove: (userId: string, skillId: string) => request<null>(`/users/${userId}/endorsements/${skillId}`, { method: "DELETE" }),
 };

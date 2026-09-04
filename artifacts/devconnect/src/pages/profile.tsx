@@ -37,6 +37,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ApiError, authApi } from "@/lib/api";
 import { useProjectMutations, useProjects } from "@/hooks/use-projects";
+import { useSkillMutations, useSkills, useUserSkills } from "@/hooks/use-skills";
+import { SkillBadges } from "@/components/skill-badges";
 import { useAuthStore } from "@/store/auth-store";
 
 const profileSchema = z.object({
@@ -117,6 +119,10 @@ export default function Profile() {
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const projectsQuery = useProjects();
   const { createProject } = useProjectMutations();
+  const skillsQuery = useSkills();
+  const userSkillsQuery = useUserSkills(user?.id ?? "");
+  const skillMutations = useSkillMutations(user?.id);
+  const [selectedSkill, setSelectedSkill] = useState("");
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -393,7 +399,7 @@ export default function Profile() {
           <section className="soft-card mt-8 rounded-2xl p-5 sm:p-8" aria-labelledby="profile-skills-heading" data-testid="section-profile-skills">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.16em] text-primary"><Tags size={13} /> Skills / technical signal</div>
             <h2 id="profile-skills-heading" className="mt-4 text-2xl font-medium tracking-[-.04em]">The tools you reach for.</h2>
-            <div className="mt-5 rounded-xl border border-dashed border-border bg-background/20 px-4 py-5 text-sm text-muted-foreground" data-testid="empty-profile-skills">Skill badges will appear here once skills are connected to your profile.</div>
+            <div className="mt-5"><SkillBadges skills={userSkillsQuery.data ?? []} /><div className="mt-5 flex flex-col gap-3 sm:flex-row"><select value={selectedSkill} onChange={(event) => setSelectedSkill(event.target.value)} className="h-10 min-w-0 flex-1 rounded-md border border-border bg-background/50 px-3 text-sm text-foreground" aria-label="Choose a skill to add"><option value="">Choose a skill to add</option>{(skillsQuery.data ?? []).filter((skill) => !(userSkillsQuery.data ?? []).some((current) => current.id === skill.id)).map((skill) => <option key={skill.id} value={skill.id}>{skill.name}</option>)}</select><Button disabled={!selectedSkill || skillMutations.add.isPending} onClick={async () => { try { await skillMutations.add.mutateAsync(selectedSkill); setSelectedSkill(""); toast({ title: "Skill added" }); } catch { toast({ title: "Unable to add skill", variant: "destructive" }); } }} className="gap-2"><Plus size={14} /> {skillMutations.add.isPending ? "Adding..." : "Add skill"}</Button></div>{skillMutations.add.error && <p className="mt-3 text-sm text-destructive">{skillMutations.add.error instanceof ApiError ? skillMutations.add.error.message : "Unable to add skill."}</p>}<div className="mt-4 flex flex-wrap gap-2">{(userSkillsQuery.data ?? []).map((skill) => <Button key={skill.id} variant="outline" size="sm" disabled={skillMutations.remove.isPending} onClick={async () => { try { await skillMutations.remove.mutateAsync(skill.id); toast({ title: "Skill removed" }); } catch { toast({ title: "Unable to remove skill", variant: "destructive" }); } }} aria-label={`Remove ${skill.name}`} className="text-muted-foreground">Remove {skill.name}</Button>)}</div></div>
           </section>
 
           <section className="soft-card mt-8 rounded-2xl p-5 sm:p-8" aria-labelledby="profile-projects-heading" data-testid="section-profile-projects">
