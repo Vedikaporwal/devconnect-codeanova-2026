@@ -1,57 +1,57 @@
 # DevConnect
 
-DevConnect is a developer networking and portfolio platform designed to make technical work, taste, and context easier to discover.
+DevConnect is a developer networking and portfolio platform where developers can create professional profiles, showcase their projects, share technical blogs, discover other developers, build connections, and endorse each other's skills.
 
-## Day 1 status
+## Features
 
-Complete:
+- User authentication and account management
+- Developer profiles with bio, skills and portfolio
+- Public developer profiles
+- Project creation and management
+- Developer discovery and search
+- Technical blog creation and publishing
+- Draft and published blog posts
+- Connection requests and connection management
+- Skill management
+- Skill endorsements
+- Developer dashboard
+- Responsive UI for desktop, tablet and mobile
 
-- Premium responsive landing page with working navigation, CTA anchors, mobile menu, profile preview interactions, and reduced-motion support
-- React + Vite + TypeScript frontend in `artifacts/devconnect`
-- Express + TypeScript API in `artifacts/api-server`
-- `GET /api/health` with the Day 1 response contract
-- Centralized error handling, environment configuration, and CORS using `CLIENT_URL`
-- Shared `ApiResponse<T>` type in `lib/shared`
-- PostgreSQL-only Prisma schema in `prisma/schema.prisma` with User, Project, BlogPost, Skill, UserSkill, Endorsement, and Connection models
-- Applied migration in `prisma/migrations/20260901155105_day2_database_schema`
-- OpenAPI contract and generated client/Zod libraries in `lib/api-spec`, `lib/api-client-react`, and `lib/api-zod`
+## Tech Stack
 
-Authentication, OAuth, profiles, projects, blogs, search, connections, uploads, notifications, and dashboards are intentionally not part of Day 1.
+**Frontend**
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- TanStack React Query
+- Zustand
+- Wouter
 
-## Setup
+**Backend**
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
 
-1. Install dependencies:
+**Database**
+- PostgreSQL
 
-   ```bash
-   pnpm install
-   ```
+## Project Structure
 
-2. Copy `.env.example` to `.env` and fill in the values you need. The landing page and health endpoint do not require authentication secrets.
-
-3. Generate the Prisma client:
-
-   ```bash
-   pnpm prisma:generate
-   ```
-
-4. Create and apply a development migration after schema changes:
-
-   ```bash
-   pnpm exec prisma migrate dev --name describe-your-change
-   ```
-
-5. Start the web app and API using the configured workflows, or run:
-
-   ```bash
-   pnpm --filter @workspace/devconnect run dev
-   pnpm --filter @workspace/api-server run dev
-   ```
-
-## Useful checks
-
-```bash
-pnpm run typecheck
-pnpm --filter @workspace/api-spec run codegen
-```
-
-The API is routed at `/api`, and the health response is available at `/api/health`.
+```text
+devconnect-codeanova-2026/
+├── artifacts/
+│   ├── api-server/       # Backend API
+│   ├── devconnect/       # Frontend application
+│   └── mockup-sandbox/
+│
+├── lib/
+│   ├── db/               # Database configuration
+│   ├── shared/           # Shared types and contracts
+│   ├── api-spec/
+│   ├── api-client-react/
+│   └── api-zod/
+│
+├── package.json
+└── pnpm-workspace.yaml
