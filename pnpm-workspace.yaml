@@ -68,14 +68,14 @@ catalog:
 
 autoInstallPeers: false
 
-onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@swc/core'
-  - esbuild
-  - msw
-  - prisma
-  - unrs-resolver
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@swc/core': true
+  esbuild: true
+  msw: true
+  prisma: true
+  unrs-resolver: true
 
 overrides:
   # replit uses linux-x64 only, we can exclude all other platforms
