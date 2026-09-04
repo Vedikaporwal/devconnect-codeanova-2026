@@ -7,6 +7,10 @@ import type {
   RegisterRequest,
   SafeUser,
   UpdateProjectRequest,
+  BlogPost,
+  CreateBlogRequest,
+  UpdateBlogRequest,
+  PublicDeveloper,
 } from "@workspace/shared";
 
 const API_ROOT = "/api";
@@ -80,4 +84,20 @@ export const projectsApi = {
     request<null>(`/projects/${id}`, {
       method: "DELETE",
     }),
+};
+
+export const blogsApi = {
+  list: () => request<BlogPost[]>("/blogs"),
+  get: (id: string) => request<BlogPost>(`/blogs/${id}`),
+  create: (input: CreateBlogRequest) => request<BlogPost>("/blogs", { method: "POST", body: JSON.stringify(input) }),
+  update: (id: string, input: UpdateBlogRequest) => request<BlogPost>(`/blogs/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+  remove: (id: string) => request<null>(`/blogs/${id}`, { method: "DELETE" }),
+};
+
+export const discoveryApi = {
+  list: (params: { search?: string; skill?: string; location?: string }) => {
+    const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value?.trim()) as string[][]).toString();
+    return request<PublicDeveloper[]>(`/users/discover${query ? `?${query}` : ""}`);
+  },
+  get: (id: string) => request<PublicDeveloper>(`/users/${id}`),
 };

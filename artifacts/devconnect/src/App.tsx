@@ -35,6 +35,11 @@ import Projects from '@/pages/projects';
 import { ProtectedRoute } from '@/components/protected-route';
 import { AppShell } from '@/components/app-shell';
 import { useAuthStore } from '@/store/auth-store';
+import Blogs from '@/pages/blogs';
+import BlogDetail from '@/pages/blog-detail';
+import BlogEditor from '@/pages/blog-editor';
+import Discover from '@/pages/discover';
+import PublicProfile from '@/pages/public-profile';
 
 const queryClient = new QueryClient();
 
@@ -310,6 +315,12 @@ function Router() {
         <Route path="/app" component={ProtectedAppHome} />
         <Route path="/projects" component={ProtectedProjects} />
         <Route path="/profile" component={ProtectedProfile} />
+        <Route path="/profile/:id" component={PublicProfile} />
+        <Route path="/blogs" component={Blogs} />
+        <Route path="/blogs/new" component={ProtectedBlogEditor} />
+        <Route path="/blogs/:id/edit" component={ProtectedBlogEditor} />
+        <Route path="/blogs/:id" component={BlogDetail} />
+        <Route path="/discover" component={Discover} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
@@ -340,6 +351,10 @@ function ProtectedProjects() {
       <Projects />
     </ProtectedRoute>
   );
+}
+
+function ProtectedBlogEditor() {
+  return <ProtectedRoute><BlogEditor /></ProtectedRoute>;
 }
 
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {

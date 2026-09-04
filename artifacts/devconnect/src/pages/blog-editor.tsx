@@ -1,0 +1,10 @@
+import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { Link, useLocation, useRoute } from "wouter";
+import { AppShell } from "@/components/app-shell";
+import { BlogForm } from "@/components/blog-form";
+import { useBlog, useBlogMutations } from "@/hooks/use-blogs";
+import { ApiError } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+
+export default function BlogEditor() { const [, params] = useRoute("/blogs/:id/edit"); const editing = Boolean(params?.id); const blogQuery = useBlog(params?.id ?? ""); const { createBlog, updateBlog } = useBlogMutations(); const [, setLocation] = useLocation(); const { toast } = useToast(); const mutation = editing ? updateBlog : createBlog; const [error, setError] = useState(""); if (editing && blogQuery.isLoading) return <AppShell><div className="mx-auto max-w-3xl p-8 text-muted-foreground">Loading field note...</div></AppShell>; const blog = blogQuery.data; return <AppShell><div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 lg:py-12"><Link href={blog ? `/blogs/${blog.id}` : "/blogs"} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"><ArrowLeft size={15} /> Back to blogs</Link><header className="my-8 border-b border-border pb-8"><p className="font-mono text-[10px] uppercase tracking-[.2em] text-primary">{editing ? "Edit / field note" : "New / field note"}</p><h1 className="mt-4 text-4xl font-semibold tracking-[-.06em]">Put the thinking <span className="text-primary">somewhere.</span></h1></header><div className="soft-card rounded-2xl p-5 sm:p-8"><BlogForm blog={blog} isPending={mutation.isPending} errorMessage={error || (mutation.error instanceof ApiError ? mutation.error.message : undefined)} onSubmit={async (input) => { setError(""); try { const saved = editing ? await updateBlog.mutateAsync({ id: params!.id, input }) : await createBlog.mutateAsync(input); toast({ title: editing ? "Blog updated" : "Blog published", description: "Your field note is in the index." }); setLocation(`/blogs/${saved.id}`); } catch { setError("The blog could not be saved. Check the fields and try again."); } }} /></div></div></AppShell>; }

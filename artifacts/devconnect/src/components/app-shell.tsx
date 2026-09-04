@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Code2, FolderKanban, Home, LogOut, Menu, UserRound, X } from "lucide-react";
+import { Code2, FolderKanban, Home, LogOut, Menu, UserRound, X, PenLine, UsersRound } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +9,8 @@ const navigation = [
   { href: "/app", label: "Overview", icon: Home },
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/profile", label: "Profile", icon: UserRound },
+  { href: "/blogs", label: "Blogs", icon: PenLine },
+  { href: "/discover", label: "Discover", icon: UsersRound },
 ];
 
 const initialsFor = (name: string) =>

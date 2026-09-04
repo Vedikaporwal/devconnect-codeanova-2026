@@ -75,3 +75,46 @@ export interface ProfileUpdateRequest {
 }
 
 export type AuthResponse = ApiResponse<SafeUser>;
+
+export interface BlogAuthor {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  published: boolean;
+  authorId: string;
+  author: BlogAuthor;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBlogRequest {
+  title: string;
+  content: string;
+  excerpt?: string | null;
+  published?: boolean;
+}
+
+export type UpdateBlogRequest = Partial<CreateBlogRequest>;
+
+export interface PublicDeveloper {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+  headline: string | null;
+  bio: string | null;
+  location: string | null;
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioUrl: string | null;
+  skills: string[];
+}
