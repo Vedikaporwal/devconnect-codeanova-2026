@@ -1,6 +1,7 @@
 import { prisma } from "@workspace/db";
 import type { Endorsement, UserEndorsementsResponse } from "@workspace/shared";
 import { AppError } from "../utils/appError";
+import { createNotification } from "./notificationService";
 
 const userSelect = { id: true, name: true, username: true, avatarUrl: true, headline: true } as const;
 const skillSelect = { id: true, name: true, slug: true } as const;
@@ -21,7 +22,9 @@ export const addEndorsement = async (endorserId: string, endorsedUserId: string,
   if (!targetSkill) throw new AppError(400, "That skill is not on the developer profile");
   const duplicate = await prisma.endorsement.findUnique({ where: { endorserId_endorsedUserId_skillId: { endorserId, endorsedUserId, skillId } } });
   if (duplicate) throw new AppError(409, "You have already endorsed this skill");
-  return toEndorsement(await prisma.endorsement.create({ data: { endorserId, endorsedUserId, skillId }, select: { id: true, createdAt: true, skill: { select: skillSelect }, endorser: { select: userSelect } } }));
+  const endorsement = toEndorsement(await prisma.endorsement.create({ data: { endorserId, endorsedUserId, skillId }, select: { id: true, createdAt: true, skill: { select: skillSelect }, endorser: { select: userSelect } } }));
+  await createNotification({ recipientId: endorsedUserId, actorId: endorserId, type: "ENDORSEMENT", entityId: endorsement.id });
+  return endorsement;
 };
 
 export const removeEndorsement = async (endorserId: string, endorsedUserId: string, skillId: string): Promise<void> => {

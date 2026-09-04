@@ -15,6 +15,12 @@ enum ConnectionStatus {
   REJECTED
 }
 
+enum NotificationType {
+  CONNECTION_REQUEST
+  CONNECTION_ACCEPTED
+  ENDORSEMENT
+}
+
 model User {
   id                   String         @id @default(uuid()) @db.Uuid
   email                String         @unique
@@ -38,6 +44,8 @@ model User {
   endorsementsReceived Endorsement[]  @relation("EndorsementsReceived")
   connectionsSent      Connection[]   @relation("ConnectionsSent")
   connectionsReceived  Connection[]   @relation("ConnectionsReceived")
+  notificationsReceived Notification[] @relation("NotificationRecipient")
+  notificationsActed   Notification[] @relation("NotificationActor")
 
   @@index([createdAt])
 }
@@ -123,4 +131,19 @@ model Connection {
   @@unique([senderId, receiverId])
   @@index([receiverId])
   @@index([status, createdAt])
+}
+
+model Notification {
+  id          String           @id @default(uuid()) @db.Uuid
+  recipientId String           @db.Uuid
+  actorId     String           @db.Uuid
+  type        NotificationType
+  entityId    String?          @db.Uuid
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  recipient   User             @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor       User             @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, read, createdAt])
+  @@index([actorId, createdAt])
 }

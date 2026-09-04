@@ -192,3 +192,33 @@ export interface UserEndorsementsResponse {
   summaries: EndorsementSummary[];
   endorsements: Endorsement[];
 }
+
+export type NotificationType = "CONNECTION_REQUEST" | "CONNECTION_ACCEPTED" | "ENDORSEMENT";
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  entityId: string | null;
+  read: boolean;
+  createdAt: string;
+  actor: ConnectionUser;
+}
+
+export interface NotificationsResponse {
+  items: Notification[];
+  unreadCount: number;
+}
+
+export interface DashboardActivity {
+  id: string;
+  type: "PROJECT_CREATED" | "BLOG_PUBLISHED" | "CONNECTION_ACCEPTED" | "ENDORSEMENT_RECEIVED";
+  label: string;
+  createdAt: string;
+}
+
+export interface DashboardData {
+  stats: { projects: number; publishedBlogs: number; connections: number; endorsementsReceived: number; incomingPending: number };
+  activity: DashboardActivity[];
+  suggestions: PublicDeveloper[];
+  trendingBlogs: BlogPost[];
+}

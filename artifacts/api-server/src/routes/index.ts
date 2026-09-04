@@ -7,6 +7,8 @@ import blogsRouter from "./blogs";
 import discoveryRouter from "./discovery";
 import connectionsRouter from "./connections";
 import socialRouter from "./social";
+import notificationsRouter from "./notifications";
+import dashboardRouter from "./dashboard";
 
 const router: IRouter = Router();
 
@@ -18,5 +20,7 @@ router.use(blogsRouter);
 router.use(discoveryRouter);
 router.use(connectionsRouter);
 router.use(socialRouter);
+router.use(notificationsRouter);
+router.use(dashboardRouter);
 
 export default router;

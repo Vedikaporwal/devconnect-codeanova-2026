@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export function ConnectionActions({ userId }: { userId: string }) {
   const { user, isAuthenticated } = useAuthStore(); const query = useConnections(); const mutations = useConnectionMutations(); const { toast } = useToast();
-  if (!isAuthenticated || user?.id === userId) return null;
+  if (!isAuthenticated || !user || user.id === userId) return null;
   const connection = [...(query.data?.incoming ?? []), ...(query.data?.outgoing ?? [])].find((item) => item.senderId === userId || item.receiverId === userId);
   const pendingIncoming = connection?.status === "PENDING" && connection.receiverId === user.id;
   const pendingOutgoing = connection?.status === "PENDING" && connection.senderId === user.id;

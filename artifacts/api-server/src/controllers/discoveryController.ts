@@ -13,7 +13,8 @@ export const discover: RequestHandler = async (req, res) => {
 };
 
 export const publicProfile: RequestHandler = async (req, res) => {
-  const developer = await getPublicDeveloper(req.params.id);
+  const developerId = typeof req.params.id === "string" ? req.params.id : req.params.id[0];
+  const developer = await getPublicDeveloper(developerId);
   if (!developer) throw new AppError(404, "Developer not found");
   res.json({ success: true, data: developer, message: "Developer profile retrieved successfully" } satisfies ApiResponse<PublicDeveloper>);
 };

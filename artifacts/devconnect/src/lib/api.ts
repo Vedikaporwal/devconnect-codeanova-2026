@@ -17,9 +17,11 @@ import type {
   Skill,
   UserEndorsementsResponse,
   UserSkill,
+  NotificationsResponse,
+  DashboardData,
 } from "@workspace/shared";
 
-const API_ROOT = "/api";
+const API_ROOT = import.meta.env.VITE_API_URL || "/api";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -128,3 +130,11 @@ export const endorsementsApi = {
   add: (userId: string, skillId: string) => request<Endorsement>(`/users/${userId}/endorsements`, { method: "POST", body: JSON.stringify({ skillId }) }),
   remove: (userId: string, skillId: string) => request<null>(`/users/${userId}/endorsements/${skillId}`, { method: "DELETE" }),
 };
+
+export const notificationsApi = {
+  list: () => request<NotificationsResponse>("/notifications"),
+  markRead: (id: string) => request<null>(`/notifications/${id}/read`, { method: "PATCH" }),
+  markAllRead: () => request<null>("/notifications/read-all", { method: "PATCH" }),
+};
+
+export const dashboardApi = { get: () => request<DashboardData>("/dashboard") };

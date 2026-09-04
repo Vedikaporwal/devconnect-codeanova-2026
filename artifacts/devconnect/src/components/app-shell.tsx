@@ -4,6 +4,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/auth-store";
+import { NotificationPanel } from "@/components/notification-panel";
 
 const navigation = [
   { href: "/app", label: "Overview", icon: Home },
@@ -58,6 +59,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="mt-auto">
+          <div className="mb-4 flex justify-end"><NotificationPanel /></div>
           <div className="mb-4 rounded-2xl border border-border bg-secondary/40 p-3">
             <div className="flex items-center gap-3">
               {user?.avatarUrl ? (
@@ -84,9 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-primary text-primary-foreground"><Code2 size={17} /></span>
           <span className="text-[15px] font-semibold">dev<span className="text-primary">connect</span></span>
         </Link>
-        <button onClick={() => setMobileOpen((open) => !open)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground" aria-label="Toggle workspace navigation" aria-expanded={mobileOpen} data-testid="button-shell-menu">
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
+        <div className="flex items-center gap-2"><NotificationPanel /><button onClick={() => setMobileOpen((open) => !open)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground" aria-label="Toggle workspace navigation" aria-expanded={mobileOpen} data-testid="button-shell-menu">{mobileOpen ? <X size={18} /> : <Menu size={18} />}</button></div>
       </header>
       {mobileOpen && (
         <div className="fixed inset-x-0 top-[65px] z-20 border-b border-border bg-background px-5 py-4 shadow-2xl lg:hidden" data-testid="menu-shell-mobile">
