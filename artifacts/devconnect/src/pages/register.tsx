@@ -45,7 +45,7 @@ export default function Register() {
         title: "Profile created",
         description: "Your developer identity is ready for its first edit.",
       });
-      setLocation("/profile");
+      setLocation("/app");
     } catch (error) {
       setServerError(error instanceof ApiError ? error.message : "Unable to create your account right now.");
     }

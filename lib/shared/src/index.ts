@@ -20,6 +20,38 @@ export interface SafeUser {
   updatedAt: string;
 }
 
+export interface ProjectOwner {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  githubUrl: string | null;
+  liveUrl: string | null;
+  imageUrl: string | null;
+  ownerId: string;
+  owner?: ProjectOwner;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProjectRequest {
+  title: string;
+  description: string;
+  techStack: string[];
+  githubUrl?: string | null;
+  liveUrl?: string | null;
+  imageUrl?: string | null;
+}
+
+export type UpdateProjectRequest = Partial<CreateProjectRequest>;
+
 export interface RegisterRequest {
   name: string;
   email: string;

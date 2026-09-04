@@ -30,7 +30,10 @@ import {
 import Login from '@/pages/login';
 import Profile from '@/pages/profile';
 import Register from '@/pages/register';
+import AppHome from '@/pages/app';
+import Projects from '@/pages/projects';
 import { ProtectedRoute } from '@/components/protected-route';
+import { AppShell } from '@/components/app-shell';
 import { useAuthStore } from '@/store/auth-store';
 
 const queryClient = new QueryClient();
@@ -304,6 +307,8 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <Route path="/app" component={ProtectedAppHome} />
+        <Route path="/projects" component={ProtectedProjects} />
         <Route path="/profile" component={ProtectedProfile} />
         <Route component={NotFound} />
       </Switch>
@@ -314,7 +319,25 @@ function Router() {
 function ProtectedProfile() {
   return (
     <ProtectedRoute>
-      <Profile />
+      <AppShell>
+        <Profile />
+      </AppShell>
+    </ProtectedRoute>
+  );
+}
+
+function ProtectedAppHome() {
+  return (
+    <ProtectedRoute>
+      <AppHome />
+    </ProtectedRoute>
+  );
+}
+
+function ProtectedProjects() {
+  return (
+    <ProtectedRoute>
+      <Projects />
     </ProtectedRoute>
   );
 }

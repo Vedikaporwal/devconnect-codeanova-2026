@@ -44,7 +44,7 @@ export default function Login() {
         title: "Welcome back",
         description: "Your profile is ready.",
       });
-      setLocation("/profile");
+      setLocation("/app");
     } catch (error) {
       setServerError(error instanceof ApiError ? error.message : "Unable to sign in right now.");
     }

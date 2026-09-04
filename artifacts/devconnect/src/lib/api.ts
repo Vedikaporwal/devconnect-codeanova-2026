@@ -1,9 +1,12 @@
 import type {
   ApiResponse,
+  CreateProjectRequest,
   LoginRequest,
+  Project,
   ProfileUpdateRequest,
   RegisterRequest,
   SafeUser,
+  UpdateProjectRequest,
 } from "@workspace/shared";
 
 const API_ROOT = "/api";
@@ -57,5 +60,24 @@ export const authApi = {
     request<SafeUser>("/users/me", {
       method: "PUT",
       body: JSON.stringify(input),
+    }),
+};
+
+export const projectsApi = {
+  list: () => request<Project[]>("/projects"),
+  get: (id: string) => request<Project>(`/projects/${id}`),
+  create: (input: CreateProjectRequest) =>
+    request<Project>("/projects", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+  update: (id: string, input: UpdateProjectRequest) =>
+    request<Project>(`/projects/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+  remove: (id: string) =>
+    request<null>(`/projects/${id}`, {
+      method: "DELETE",
     }),
 };

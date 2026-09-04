@@ -2,11 +2,12 @@ import {
   ArrowUpRight,
   AtSign,
   Check,
-  Code2,
+  FolderKanban,
   Globe2,
   Github,
   Linkedin,
   MapPin,
+  Plus,
   Save,
   Terminal,
   X,
@@ -18,6 +19,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ProfileUpdateRequest, SafeUser } from "@workspace/shared";
+import type { CreateProjectRequest } from "@workspace/shared";
+import { ProjectCard } from "@/components/project-card";
+import { ProjectFormDialog } from "@/components/project-form-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,6 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ApiError, authApi } from "@/lib/api";
+import { useProjectMutations, useProjects } from "@/hooks/use-projects";
 import { useAuthStore } from "@/store/auth-store";
 
 const profileSchema = z.object({
@@ -108,6 +113,9 @@ export default function Profile() {
   const { user, isAuthenticated, setUser, clearUser, logout } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const projectsQuery = useProjects();
+  const { createProject } = useProjectMutations();
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -170,6 +178,12 @@ export default function Profile() {
     }
   };
 
+  const handleCreateProject = async (input: CreateProjectRequest) => {
+    await createProject.mutateAsync(input);
+    setProjectDialogOpen(false);
+    toast({ title: "Project added", description: "Your profile now has another useful signal." });
+  };
+
   if (profileQuery.isLoading || !user) {
     return (
       <main className="devconnect-shell grain grid min-h-[100dvh] place-items-center px-5">
@@ -188,31 +202,6 @@ export default function Profile() {
 
   return (
     <main className="devconnect-shell grain min-h-[100dvh] overflow-hidden">
-      <nav className="relative z-10 mx-auto flex max-w-[1240px] items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" className="group flex items-center gap-3" data-testid="link-profile-logo">
-          <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-primary text-primary-foreground transition-transform duration-300 group-hover:rotate-12">
-            <Code2 size={17} strokeWidth={2.8} />
-          </span>
-          <span className="text-[15px] font-semibold tracking-[-.02em]">
-            dev<span className="text-primary">connect</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <span className="hidden font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground sm:block" data-testid="text-profile-handle">
-            @{profile.username}
-          </span>
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            disabled={logoutPending}
-            className="text-xs text-muted-foreground hover:text-foreground"
-            data-testid="button-logout"
-          >
-            {logoutPending ? "Closing…" : "Log out"}
-          </Button>
-        </div>
-      </nav>
-
       <section className="relative mx-auto max-w-[1000px] px-5 pb-20 pt-14 sm:px-8 sm:pt-24 lg:px-10 lg:pb-32">
         <div className="grid-lines pointer-events-none absolute inset-x-0 top-0 h-[500px] opacity-60" />
         <div className="relative">
@@ -399,6 +388,25 @@ export default function Profile() {
               </Form>
             </div>
           )}
+
+          <section className="soft-card mt-8 rounded-2xl p-5 sm:p-8" aria-labelledby="profile-projects-heading" data-testid="section-profile-projects">
+            <div className="flex flex-col justify-between gap-5 border-b border-border pb-6 sm:flex-row sm:items-end">
+              <div>
+                <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.16em] text-primary"><FolderKanban size={13} /> Project signal</div>
+                <h2 id="profile-projects-heading" className="text-2xl font-medium tracking-[-.04em]">The work behind the profile.</h2>
+                <p className="mt-2 text-sm text-muted-foreground">Give people something specific to ask you about.</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link href="/projects" className="font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground transition-colors hover:text-primary" data-testid="link-profile-manage-projects">Manage all</Link>
+                <Button onClick={() => setProjectDialogOpen(true)} className="gap-2 rounded-full text-xs" data-testid="button-profile-add-project"><Plus size={14} /> Add project</Button>
+              </div>
+            </div>
+            {projectsQuery.isLoading && <div className="grid gap-3 pt-6 sm:grid-cols-2"><div className="h-28 animate-pulse rounded-xl bg-primary/5" data-testid="skeleton-profile-project-0" /><div className="h-28 animate-pulse rounded-xl bg-primary/5" data-testid="skeleton-profile-project-1" /></div>}
+            {projectsQuery.isError && <p className="pt-6 text-sm text-muted-foreground" role="alert" data-testid="status-profile-projects-error">Projects could not be loaded yet. Visit the Projects page to try again.</p>}
+            {!projectsQuery.isLoading && !projectsQuery.isError && (projectsQuery.data ?? []).length === 0 && <div className="border-dashed pt-6" data-testid="empty-profile-projects"><p className="text-sm text-muted-foreground">No projects are connected to this profile yet.</p><Button variant="outline" onClick={() => setProjectDialogOpen(true)} className="mt-4 gap-2" data-testid="button-profile-empty-add-project"><Plus size={14} /> Add the first one</Button></div>}
+            {!projectsQuery.isLoading && !projectsQuery.isError && (projectsQuery.data ?? []).length > 0 && <div className="grid gap-4 pt-6 sm:grid-cols-2">{(projectsQuery.data ?? []).slice(0, 2).map((project, index) => <ProjectCard key={project.id} project={project} index={index} />)}</div>}
+          </section>
+          <ProjectFormDialog open={projectDialogOpen} onOpenChange={setProjectDialogOpen} onSubmit={handleCreateProject} isPending={createProject.isPending} errorMessage={createProject.error instanceof ApiError ? createProject.error.message : createProject.error ? "Unable to add this project right now." : undefined} />
         </div>
       </section>
     </main>

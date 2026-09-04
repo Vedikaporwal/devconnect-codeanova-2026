@@ -1,0 +1,638 @@
+DAY 4 — DEVCONNECT PROJECT SHOWCASE + MAIN APPLICATION UI
+
+IMPORTANT — EXISTING PROJECT
+
+This is the existing DevConnect project. Day 1, Day 2, and Day 3 are COMPLETE and working.
+
+DO NOT create a new project.
+DO NOT create a new GitHub repository.
+DO NOT change the existing Git remote.
+DO NOT change origin/main.
+DO NOT reset Git history.
+DO NOT rebase.
+DO NOT force push.
+DO NOT delete existing files or features.
+DO NOT overwrite working Day 1–3 implementation.
+DO NOT rebuild the project from scratch.
+
+Build ADDITIVELY on the existing codebase.
+
+Preserve:
+- Day 1 landing page
+- Day 2 PostgreSQL + Prisma schema
+- Day 3 authentication
+- Day 3 profile
+- Existing API health endpoint
+- Existing routing
+- Existing design system
+- Existing Git configuration
+
+Before editing:
+1. Inspect the existing repository.
+2. Inspect the current Prisma schema.
+3. Inspect the existing Project model.
+4. Inspect existing authentication middleware.
+5. Inspect existing frontend routing and components.
+6. Inspect existing API/service patterns.
+7. Reuse existing components and utilities wherever possible.
+
+Do NOT create duplicate models, services, API clients, authentication systems, or routing systems.
+
+==================================================
+DAY 4 GOAL
+==================================================
+
+Implement the DevConnect Project Showcase feature end-to-end.
+
+Also create the main authenticated application navigation/shell required to access Projects.
+
+The feature must work:
+
+React frontend
+      ↓
+Express API
+      ↓
+Prisma
+      ↓
+PostgreSQL
+
+Do not implement blogs, connections, endorsements, notifications, dashboard analytics, or other Day 5+ features.
+
+==================================================
+1. PROJECT DATABASE
+==================================================
+
+Use the EXISTING Prisma Project model from Day 2.
+
+Inspect it first.
+
+Do not create another Project model.
+
+Ensure the Project model supports, where already specified:
+
+- id
+- title
+- description
+- tech stack
+- image/project image URL if supported
+- GitHub/repository URL
+- live project URL
+- owner/user relation
+- createdAt
+- updatedAt
+
+Only add missing fields if genuinely required.
+
+If schema changes are required:
+
+- modify prisma/schema.prisma
+- create a NEW Prisma migration
+- never modify an old migration
+- generate Prisma client
+- apply migration
+- verify database
+
+Preserve all existing User relationships.
+
+==================================================
+2. BACKEND PROJECT API
+==================================================
+
+Create clean RESTful Project APIs using the existing backend architecture.
+
+Use:
+
+controllers/
+routes/
+services/
+middleware/
+
+Do NOT put business logic directly in route files.
+
+Endpoints:
+
+GET /api/projects
+
+GET /api/projects/:id
+
+POST /api/projects
+
+PUT /api/projects/:id
+
+DELETE /api/projects/:id
+
+==================================================
+3. PROJECT LIST
+==================================================
+
+GET /api/projects
+
+Return projects appropriately for the authenticated user or the existing application design.
+
+Use the existing authentication middleware where authentication is required.
+
+Return the standard response:
+
+{
+  "success": true,
+  "data": ...,
+  "message": "..."
+}
+
+Never return sensitive user information.
+
+Include project owner information only when safe and necessary.
+
+==================================================
+4. CREATE PROJECT
+==================================================
+
+POST /api/projects
+
+Require authentication.
+
+Accept:
+
+{
+  "title": "...",
+  "description": "...",
+  "techStack": ["React", "Node.js", "PostgreSQL"],
+  "githubUrl": "...",
+  "liveUrl": "...",
+  "imageUrl": "..."
+}
+
+Use the authenticated user as the project owner.
+
+DO NOT allow the frontend to provide an arbitrary owner/user ID.
+
+Validate:
+
+- title required
+- reasonable title length
+- description reasonable length
+- techStack valid
+- URLs valid when provided
+
+Return the created project using the standard API response.
+
+==================================================
+5. GET SINGLE PROJECT
+==================================================
+
+GET /api/projects/:id
+
+Return the project details.
+
+Handle:
+
+- project not found
+- invalid ID
+- unauthorized access where applicable
+
+Use consistent errors:
+
+{
+  "success": false,
+  "data": null,
+  "message": "Project not found"
+}
+
+==================================================
+6. UPDATE PROJECT
+==================================================
+
+PUT /api/projects/:id
+
+Require authentication.
+
+Only the project owner can update their project.
+
+Do NOT allow users to modify another user's project.
+
+Allow updating:
+
+- title
+- description
+- tech stack
+- image URL
+- GitHub URL
+- live URL
+
+Use partial update behavior where appropriate.
+
+==================================================
+7. DELETE PROJECT
+==================================================
+
+DELETE /api/projects/:id
+
+Require authentication.
+
+Only the owner can delete the project.
+
+Return:
+
+{
+  "success": true,
+  "data": null,
+  "message": "Project deleted successfully"
+}
+
+Handle unauthorized access safely.
+
+==================================================
+8. FRONTEND PROJECTS PAGE
+==================================================
+
+Create:
+
+/projects
+
+Use the existing frontend routing system.
+
+IMPORTANT:
+Do not replace the existing routing library just because another library may be preferred.
+
+Use whatever routing architecture already exists in the project.
+
+The Projects page should include:
+
+- Page heading
+- Short description
+- Add Project button
+- Project cards
+- Loading state
+- Empty state
+- Error state
+- Responsive layout
+
+==================================================
+9. PROJECT CARD
+==================================================
+
+Create a reusable ProjectCard component.
+
+Display:
+
+- Project title
+- Description
+- Technology tags
+- Project image/visual when available
+- GitHub link
+- Live project link
+- Edit button for owner
+- Delete button for owner
+
+Cards should have:
+
+- polished hover interaction
+- subtle animation
+- good spacing
+- responsive design
+- accessible buttons/links
+
+Do not overuse animation.
+
+==================================================
+10. CREATE PROJECT UI
+==================================================
+
+Create a clean modal, drawer, or dedicated form for creating projects.
+
+Fields:
+
+Title
+Description
+Tech Stack
+GitHub URL
+Live URL
+Project Image URL
+
+Use clear validation.
+
+Show:
+
+- loading state
+- success feedback
+- validation errors
+- API errors
+
+After successful creation:
+
+- close/reset the form
+- refresh the project list
+- show the newly created project
+
+==================================================
+11. EDIT PROJECT UI
+==================================================
+
+Reuse the project form for editing.
+
+Pre-fill existing values.
+
+On save:
+
+PUT /api/projects/:id
+
+After successful update:
+
+- update the displayed project
+- show success feedback
+- close the edit interface
+
+==================================================
+12. DELETE PROJECT UI
+==================================================
+
+When deleting a project:
+
+Show a confirmation step.
+
+Do not delete immediately from a single accidental click.
+
+After successful deletion:
+
+- remove the project from the UI
+- show confirmation
+
+==================================================
+13. TANSTACK QUERY
+==================================================
+
+Use the existing TanStack React Query setup.
+
+Create reusable project queries/mutations.
+
+Use React Query for server state.
+
+Do not duplicate project server state unnecessarily in Zustand.
+
+Use appropriate:
+
+- query
+- mutation
+- invalidation
+- loading states
+- error states
+
+==================================================
+14. ZUSTAND
+==================================================
+
+Do not put project server state into Zustand.
+
+Keep Zustand primarily for client-side/auth state as already implemented.
+
+==================================================
+15. API SERVICE
+==================================================
+
+Reuse the existing frontend API service layer.
+
+Do NOT create a second API client.
+
+Create project API methods in the existing service architecture.
+
+All requests must use the existing authentication mechanism.
+
+==================================================
+16. MAIN APPLICATION NAVIGATION
+==================================================
+
+Update the authenticated navigation/shell only as necessary.
+
+Authenticated navigation should provide access to:
+
+- Home / Overview
+- Profile
+- Projects
+- Logout
+
+Keep the existing landing page navigation for unauthenticated users.
+
+Do not implement Dashboard functionality yet.
+
+Do not implement Blog, Connections, Endorsements, or Notifications navigation functionality yet.
+
+If navigation placeholders are needed for future features, make them visually present but non-functional rather than implementing those features.
+
+==================================================
+17. APPLICATION HOME / OVERVIEW
+==================================================
+
+If the existing project does not have an authenticated home/overview page, create a lightweight authenticated home page.
+
+It should contain:
+
+- Welcome message using the authenticated user's name
+- Quick profile summary
+- Project count
+- Quick action to create a project
+- Quick action to view profile
+- Recent projects preview
+
+IMPORTANT:
+
+This is NOT the Day 13 full dashboard.
+
+Do not implement activity feeds, trending posts, connection suggestions, or analytics yet.
+
+==================================================
+18. PROFILE → PROJECTS
+==================================================
+
+Update the existing profile page only where necessary.
+
+Add a Projects section showing the authenticated user's projects.
+
+Provide:
+
+"View All Projects"
+
+and/or
+
+"Add Project"
+
+actions.
+
+Do not redesign the completed profile page unnecessarily.
+
+==================================================
+19. DESIGN
+==================================================
+
+Maintain the existing DevConnect visual identity.
+
+The UI should feel like a premium developer networking platform.
+
+Use the existing design system rather than inventing a completely new one.
+
+Maintain:
+
+- dark modern theme
+- existing DevConnect accent colors
+- strong typography
+- subtle background/grid effects
+- glass/card surfaces where already used
+- clean spacing
+- responsive layouts
+- accessible contrast
+
+Add tasteful:
+
+- hover animations
+- card transitions
+- button interactions
+- page transitions where compatible
+
+Support reduced motion where appropriate.
+
+Do not spend excessive effort on decorative animations.
+
+Functionality is more important than decoration.
+
+==================================================
+20. RESPONSIVE DESIGN
+==================================================
+
+Verify:
+
+Desktop
+Tablet
+Mobile
+
+Projects must work properly on small screens.
+
+Avoid:
+
+- horizontal overflow
+- broken cards
+- clipped buttons
+- unreadable text
+- inaccessible forms
+
+==================================================
+21. SECURITY
+==================================================
+
+Project ownership must ALWAYS be determined from the authenticated server-side user.
+
+Never trust:
+
+ownerId
+userId
+or similar ownership information
+
+sent by the frontend.
+
+A user must not be able to:
+
+- edit another user's project
+- delete another user's project
+
+Do not expose:
+
+- password hashes
+- JWT secrets
+- DATABASE_URL
+- other server secrets
+
+==================================================
+22. ERROR HANDLING
+==================================================
+
+Use the existing centralized error middleware.
+
+All API errors must follow:
+
+{
+  "success": false,
+  "data": null,
+  "message": "..."
+}
+
+Do not expose stack traces or sensitive internal information.
+
+==================================================
+23. TESTING
+==================================================
+
+Before finishing, test:
+
+1. Existing landing page still works
+2. Existing login still works
+3. Existing registration still works
+4. Existing profile still works
+5. /api/health still works
+6. Authenticated user can create a project
+7. Project appears in project list
+8. Project details work
+9. Owner can edit project
+10. Owner can delete project
+11. Another user cannot edit the project
+12. Another user cannot delete the project
+13. Invalid project data is rejected
+14. Invalid URLs are rejected where validation is required
+15. Logout still works
+16. Protected routes still work
+17. TypeScript checks pass
+18. Prisma validation passes
+19. Prisma client generates successfully
+20. Backend build passes
+21. Frontend build passes
+22. Desktop UI works
+23. Mobile UI works
+24. No console/runtime errors
+
+==================================================
+24. GIT SAFETY — EXTREMELY IMPORTANT
+==================================================
+
+DO NOT:
+
+- git reset
+- git reset --hard
+- git rebase
+- git push --force
+- change origin
+- create a new repository
+- delete existing commits
+- overwrite Day 1–3 implementation
+- modify unrelated files unnecessarily
+
+Preserve existing main branch and Git history.
+
+Do not automatically commit or push.
+
+Before finishing:
+
+- inspect git status
+- inspect git diff
+- identify all modified/new files
+- verify there are no unrelated changes
+
+If an unrelated file was accidentally modified by dependency installation or tooling, restore it carefully without touching Day 1–3 work.
+
+STOP after implementation and verification.
+
+DO NOT COMMIT.
+
+Report:
+
+1. Files created
+2. Files modified
+3. API endpoints added
+4. Prisma changes
+5. Frontend pages/components added
+6. Tests performed
+7. Build/typecheck results
+8. Confirmation that Day 1–3 still work
+9. Confirmation that project ownership/security was tested
+10. Current git status
+11. Whether any unrelated files changed
+
+WAIT FOR MY REVIEW BEFORE COMMITTING.
+
+This is DAY 4 ONLY.
