@@ -10,6 +10,7 @@ import {
   Plus,
   Save,
   Terminal,
+  Tags,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -388,6 +389,12 @@ export default function Profile() {
               </Form>
             </div>
           )}
+
+          <section className="soft-card mt-8 rounded-2xl p-5 sm:p-8" aria-labelledby="profile-skills-heading" data-testid="section-profile-skills">
+            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.16em] text-primary"><Tags size={13} /> Skills / technical signal</div>
+            <h2 id="profile-skills-heading" className="mt-4 text-2xl font-medium tracking-[-.04em]">The tools you reach for.</h2>
+            <div className="mt-5 rounded-xl border border-dashed border-border bg-background/20 px-4 py-5 text-sm text-muted-foreground" data-testid="empty-profile-skills">Skill badges will appear here once skills are connected to your profile.</div>
+          </section>
 
           <section className="soft-card mt-8 rounded-2xl p-5 sm:p-8" aria-labelledby="profile-projects-heading" data-testid="section-profile-projects">
             <div className="flex flex-col justify-between gap-5 border-b border-border pb-6 sm:flex-row sm:items-end">

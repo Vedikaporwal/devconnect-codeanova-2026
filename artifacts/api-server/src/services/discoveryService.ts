@@ -11,15 +11,16 @@ export const discoverDevelopers = async (filters: { search?: string; skill?: str
       ...(location ? { location: { contains: location, mode: "insensitive" } } : {}),
       ...(skill ? { userSkills: { some: { skill: { name: { contains: skill, mode: "insensitive" } } } } } : {}),
     },
-    select: { id: true, name: true, username: true, avatarUrl: true, headline: true, bio: true, location: true, githubUrl: true, linkedinUrl: true, portfolioUrl: true, userSkills: { select: { skill: { select: { name: true } } }, orderBy: { createdAt: "asc" }, take: 8 } },
+    select: { id: true, name: true, username: true, avatarUrl: true, headline: true, bio: true, location: true, githubUrl: true, linkedinUrl: true, portfolioUrl: true, userSkills: { select: { skill: { select: { name: true } } }, orderBy: { createdAt: "asc" }, take: 8 }, projects: { select: { id: true, title: true, description: true, techStack: true, repoUrl: true, liveUrl: true, imageUrl: true }, orderBy: { createdAt: "desc" }, take: 6 } },
     orderBy: [{ createdAt: "desc" }, { name: "asc" }],
     take: 50,
   });
-  return users.map((user) => ({ ...user, skills: user.userSkills.map(({ skill: item }) => item.name), userSkills: undefined })).map(({ userSkills: _userSkills, ...user }) => user);
+  return users.map(({ userSkills, projects, ...user }) => ({ ...user, skills: userSkills.map(({ skill }) => skill.name), projects: projects.map(({ repoUrl, ...project }) => ({ ...project, githubUrl: repoUrl })) }));
 };
 
 export const getPublicDeveloper = async (id: string): Promise<PublicDeveloper | null> => {
-  const users = await prisma.user.findUnique({ where: { id }, select: { id: true, name: true, username: true, avatarUrl: true, headline: true, bio: true, location: true, githubUrl: true, linkedinUrl: true, portfolioUrl: true, userSkills: { select: { skill: { select: { name: true } } }, orderBy: { createdAt: "asc" }, take: 8 } } });
+  const users = await prisma.user.findUnique({ where: { id }, select: { id: true, name: true, username: true, avatarUrl: true, headline: true, bio: true, location: true, githubUrl: true, linkedinUrl: true, portfolioUrl: true, userSkills: { select: { skill: { select: { name: true } } }, orderBy: { createdAt: "asc" }, take: 8 }, projects: { select: { id: true, title: true, description: true, techStack: true, repoUrl: true, liveUrl: true, imageUrl: true }, orderBy: { createdAt: "desc" }, take: 6 } } });
   if (!users) return null;
-  return { ...users, skills: users.userSkills.map(({ skill }) => skill.name) } as PublicDeveloper;
+  const { userSkills, projects, ...user } = users;
+  return { ...user, skills: userSkills.map(({ skill }) => skill.name), projects: projects.map(({ repoUrl, ...project }) => ({ ...project, githubUrl: repoUrl })) };
 };

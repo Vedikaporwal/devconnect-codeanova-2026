@@ -1,9 +1,10 @@
-import { ArrowUpRight, FolderKanban, Plus, UserRound, Zap } from "lucide-react";
+import { ArrowUpRight, BookOpen, FolderKanban, Plus, UserRound, UsersRound, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { AppShell } from "@/components/app-shell";
 import { ProjectCard } from "@/components/project-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProjects } from "@/hooks/use-projects";
+import { useBlogs } from "@/hooks/use-blogs";
 import { useAuthStore } from "@/store/auth-store";
 
 const initialsFor = (name: string) =>
@@ -12,9 +13,10 @@ const initialsFor = (name: string) =>
 export default function AppHome() {
   const { user } = useAuthStore();
   const projectsQuery = useProjects();
+  const blogsQuery = useBlogs();
   const projects = projectsQuery.data ?? [];
   const firstName = user?.name.split(" ")[0] ?? "builder";
-  const profileComplete = [user?.headline, user?.bio, user?.githubUrl, user?.portfolioUrl].filter(Boolean).length;
+  const profileComplete = [user?.headline, user?.bio, user?.location, user?.avatarUrl, user?.githubUrl, user?.linkedinUrl, user?.portfolioUrl].filter(Boolean).length;
 
   return (
     <AppShell>
@@ -29,7 +31,7 @@ export default function AppHome() {
           <Link href="/projects" className="flex w-fit items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="link-overview-add-project"><Plus size={16} /> Add a project <ArrowUpRight size={14} /></Link>
         </header>
 
-        <section className="relative grid gap-4 py-8 sm:grid-cols-3" aria-label="Workspace summary">
+        <section className="relative grid gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4" aria-label="Workspace summary">
           <div className="soft-card rounded-2xl p-5" data-testid="stat-project-count">
             <div className="mb-10 flex items-center justify-between"><FolderKanban size={17} className="text-primary" /><span className="font-mono text-[9px] uppercase tracking-[.16em] text-muted-foreground">Inventory</span></div>
             <p className="text-4xl font-semibold tracking-[-.06em]">{projects.length}</p>
@@ -37,8 +39,13 @@ export default function AppHome() {
           </div>
           <div className="soft-card rounded-2xl p-5" data-testid="stat-profile-state">
             <div className="mb-10 flex items-center justify-between"><UserRound size={17} className="text-cyan-300" /><span className="font-mono text-[9px] uppercase tracking-[.16em] text-muted-foreground">Profile signal</span></div>
-            <p className="text-4xl font-semibold tracking-[-.06em]">{profileComplete}<span className="text-lg text-muted-foreground"> / 4</span></p>
+            <p className="text-4xl font-semibold tracking-[-.06em]">{profileComplete}<span className="text-lg text-muted-foreground"> / 7</span></p>
             <p className="mt-2 text-sm text-muted-foreground">context markers filled in</p>
+          </div>
+          <div className="soft-card rounded-2xl p-5" data-testid="stat-blog-count">
+            <div className="mb-10 flex items-center justify-between"><BookOpen size={17} className="text-orange-300" /><span className="font-mono text-[9px] uppercase tracking-[.16em] text-muted-foreground">Field notes</span></div>
+            <p className="text-4xl font-semibold tracking-[-.06em]">{blogsQuery.data?.length ?? 0}</p>
+            <p className="mt-2 text-sm text-muted-foreground">blogs in your index</p>
           </div>
           <div className="rounded-2xl border border-primary/25 bg-primary/10 p-5" data-testid="stat-discoverability">
             <div className="mb-10 flex items-center justify-between"><Zap size={17} className="text-primary" /><span className="font-mono text-[9px] uppercase tracking-[.16em] text-primary">Next useful move</span></div>
@@ -72,6 +79,8 @@ export default function AppHome() {
             <div className="space-y-2">
               <Link href="/projects" className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5" data-testid="link-quick-projects"><span className="flex items-center gap-3"><FolderKanban size={15} className="text-primary" /> Review projects</span><ArrowUpRight size={14} /></Link>
               <Link href="/profile" className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5" data-testid="link-quick-profile"><span className="flex items-center gap-3"><UserRound size={15} className="text-primary" /> Edit profile</span><ArrowUpRight size={14} /></Link>
+              <Link href="/blogs" className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5" data-testid="link-quick-blogs"><span className="flex items-center gap-3"><BookOpen size={15} className="text-orange-300" /> Read and write blogs</span><ArrowUpRight size={14} /></Link>
+              <Link href="/discover" className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5" data-testid="link-quick-discover"><span className="flex items-center gap-3"><UsersRound size={15} className="text-cyan-300" /> Discover developers</span><ArrowUpRight size={14} /></Link>
             </div>
           </div>
         </section>

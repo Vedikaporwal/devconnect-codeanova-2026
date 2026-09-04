@@ -41,7 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mt-14 px-2 font-mono text-[9px] uppercase tracking-[.2em] text-muted-foreground">Workspace</div>
         <nav className="mt-3 space-y-1" aria-label="Workspace navigation">
           {navigation.map(({ href, label, icon: Icon }) => {
-            const active = location === href;
+            const active = location === href || (href !== "/app" && location.startsWith(`${href}/`));
             return (
               <Link
                 key={href}
@@ -84,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-primary text-primary-foreground"><Code2 size={17} /></span>
           <span className="text-[15px] font-semibold">dev<span className="text-primary">connect</span></span>
         </Link>
-        <button onClick={() => setMobileOpen((open) => !open)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground" aria-label="Toggle workspace navigation" data-testid="button-shell-menu">
+        <button onClick={() => setMobileOpen((open) => !open)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground" aria-label="Toggle workspace navigation" aria-expanded={mobileOpen} data-testid="button-shell-menu">
           {mobileOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
       </header>
@@ -92,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-x-0 top-[65px] z-20 border-b border-border bg-background px-5 py-4 shadow-2xl lg:hidden" data-testid="menu-shell-mobile">
           <nav className="space-y-1" aria-label="Mobile workspace navigation">
             {navigation.map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm ${location === href ? "bg-primary/10 text-primary" : "text-muted-foreground"}`} data-testid={`link-mobile-shell-${label.toLowerCase()}`}>
+              <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm ${location === href || (href !== "/app" && location.startsWith(`${href}/`)) ? "bg-primary/10 text-primary" : "text-muted-foreground"}`} data-testid={`link-mobile-shell-${label.toLowerCase()}`}>
                 <Icon size={16} /> {label}
               </Link>
             ))}

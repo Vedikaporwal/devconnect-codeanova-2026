@@ -117,4 +117,15 @@ export interface PublicDeveloper {
   linkedinUrl: string | null;
   portfolioUrl: string | null;
   skills: string[];
+  projects: PublicProject[];
+}
+
+export interface PublicProject {
+  id: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  githubUrl: string | null;
+  liveUrl: string | null;
+  imageUrl: string | null;
 }
