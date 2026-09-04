@@ -1,7 +1,0 @@
- .../api-server/src/services/discoveryService.ts    |  9 [32m++++[m[31m----[m
- artifacts/devconnect/src/components/app-shell.tsx  |  6 [32m++[m[31m---[m
- artifacts/devconnect/src/pages/app.tsx             | 17 [32m++++++++++[m[31m----[m
- artifacts/devconnect/src/pages/profile.tsx         |  7 [32m++++++[m
- artifacts/devconnect/src/pages/public-profile.tsx  | 26 [32m+++++++++++++++++++[m[31m---[m
- lib/shared/src/index.ts                            | 11 [32m+++++++++[m
- 6 files changed, 62 insertions(+), 14 deletions(-)
